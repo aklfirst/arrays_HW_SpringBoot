@@ -5,9 +5,7 @@ import com.example.arrays_hw_springboot.exceptions.EmployeeAlreadyAddedException
 import com.example.arrays_hw_springboot.exceptions.EmployeeNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 @Service
 
@@ -24,27 +22,29 @@ public class EmployeeServiceImpl implements EmployeeService {
     ));
 
     @Override
-    public String printAllEmployees() {
-      return employees.toString();
+    public Collection<Employee> printAllEmployees() {
+      return Collections.unmodifiableList(employees);
     }
 
     @Override
-    public boolean remove(String firstName, String lastName) throws EmployeeNotFoundException {
+    public Employee remove(String firstName, String lastName) throws EmployeeNotFoundException {
         Employee forRemove = new Employee(firstName, lastName);
-        if (employees.remove(forRemove)) {
-            return true;
+        if (!employees.contains(forRemove)) {
+            throw new EmployeeNotFoundException("Такой сотрудник не найден!");
         }
-        throw new EmployeeNotFoundException("Такой сотрудник не найдем!");
+        employees.remove(forRemove);
+        return forRemove;
     }
 
 
     @Override
-    public boolean add(String firstName, String lastName) throws EmployeeAlreadyAddedException {
+    public Employee add(String firstName, String lastName) throws EmployeeAlreadyAddedException {
         Employee toAdd = new Employee(firstName, lastName);
         if (employees.contains(toAdd)) {
             throw new EmployeeAlreadyAddedException("Такой сотрудник уже есть в базе!");
         }
-        return employees.add(toAdd);
+        employees.add(toAdd);
+        return toAdd;
     }
 
 
